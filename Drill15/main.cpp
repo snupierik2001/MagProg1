@@ -1,72 +1,65 @@
 #include "Simple_window.h"
 #include "Graph.h"
 
-double one(double x) { return 1; }
-double slope(double x) { return x/2; }
-double square(double x) { return x*x; }
-double sloping_cos(double x) { return cos(x) + slope(x); }
+double one(double x)
+{
+	return 1;
+}
+
+double slope(double x)
+{
+	return x / 2;
+}
+
+double square(double x)
+{
+	return x * x;
+}
+
+double sloping_cos(double x)
+{
+	return cos(x) + slope(x);
+}
 
 int main()
-try {
-    const int xmax = 600;   //ablak
-    const int ymax = 600;
+{	
+	using namespace Graph_lib;
 
-    const int x_orig = xmax/2;
-    const int y_orig = ymax/2;
-    const Point orig(x_orig,y_orig);
 
-    const int r_min = -10;
-    const int r_max = 11;
+	const Point origin{300,300};
+	constexpr int r1 = -10;
+	constexpr int r2 = 11;
+	constexpr int count = 400;
+	constexpr int x_scale = 20;
+	constexpr int y_scale = 20;
+	
+	Point tl {100, 100};
+	Simple_window win{tl, 600, 600, "My window"};
 
-    const int n_points = 400;
+	Axis x {Axis::x, Point{100, 300}, 400, 20, "1 == 20 pixels"};
+	Axis y {Axis::y, Point{300, 500}, 400, 20, "1 == 20 pixels"};
 
-    const int x_scale = 20;
-    const int y_scale = 20;
+	x.set_color(Color::red);
+	y.set_color(Color::red);
 
-    Point tl(600,50);
-    Simple_window win(tl,xmax,ymax,"Function graphs");
+	win.attach(x);
+	win.attach(y);
 
-    const int xlength = xmax - 200;
-    const int ylength = ymax - 200;
+	Function f(one, r1, r2, origin, count, x_scale, y_scale);
+	Function sl(slope, r1, r2, origin, count, x_scale, y_scale);
+	Function sq(square, r1, r2, origin, count, x_scale, y_scale);
+	Function cs(cos, r1, r2, origin, count, x_scale, y_scale);
+	Function sl_cos(sloping_cos, r1, r2, origin, count, x_scale, y_scale);
 
-    Axis x(Axis::x,Point(100,y_orig),xlength,xlength/x_scale,"1 == 20 pixels");
-    x.set_color(Color::red);
-    win.attach(x);
-    Axis y(Axis::y,Point(x_orig,500),ylength,ylength/y_scale,"1 == 20 pixels");
-    y.set_color(Color::red);
-    win.attach(y);
-    win.wait_for_button();
+	Text sl_text{Point{100, 385}, "x/2"};
+	cs.set_color(Color::blue);
 
-    Function s(one,r_min,r_max,orig,n_points,x_scale,y_scale);
-    win.attach(s);
-    win.wait_for_button();
+	win.attach(f);
+	win.attach(sl);
+	win.attach(sl_text);
+	win.attach(sq);
+	win.attach(cs);
+	win.attach(sl_cos);
 
-    Function s2(slope,r_min,r_max,orig,n_points,x_scale,y_scale);
-    win.attach(s2);
-    win.wait_for_button();
-
-    Text ts2(Point(100,y_orig+4*y_scale),"x/2");
-    win.attach(ts2);
-    win.wait_for_button();
-
-    Function s3(square,r_min,r_max,orig,n_points,x_scale,y_scale);
-    win.attach(s3);
-    win.wait_for_button();
-
-    Function s4(cos,r_min,r_max,orig,n_points,x_scale,y_scale);
-    s4.set_color(Color::blue);
-    win.attach(s4);
-    win.wait_for_button();
-
-    Function s5(sloping_cos,r_min,r_max,orig,n_points,x_scale,y_scale);
-    win.attach(s5);
-    win.wait_for_button();
-}
-catch (exception& e) {
-    cerr << "exception: " << e.what() << endl;
-    keep_window_open();
-}
-catch (...) {
-    cerr << "exception\n";
-    keep_window_open();
+	win.wait_for_button();
 }
