@@ -1,120 +1,114 @@
-#include <iostream>
-#include <vector>
+#include "std_lib_facilities.h"
 
-using namespace std;
-
-template <typename T>
+template<typename T> 
 struct S
 {
     private:
-    T val;
+       T val;
+       T n_val;
+    public:   
+	   explicit S(T v=0) : val{v} {};
+       
+	   T& get();
+	   const T& get() const;
 
-    public:
-    explicit S(T v=0) : val{v} {};
-
-    const T& get();
-    S& operator= (const T& new_val);
-//    void set(T vv);
-
+	   void set(T n_val) {val=n_val;};
 };
 
-template <typename T>
-const T& S<T>:: get()
-    {
-        return val;
-    }
-template <typename T>
-S<T>& S<T>::operator= (const T& new_val)
+template<typename T>
+T& S<T>::get()
 {
-    val=new_val;
-    return *this;
-}
-/*
-template <typename T>
-void S<T>::set(T vv)
-{
-    val=vv;
-}
-*/
-
-template <typename T>
-void read_val(T& value)
-{
-    cin>>value;
+	return val;
 }
 
-template <typename T>
-ostream& operator<< (ostream& os, vector<T>& v)
+template<typename T>
+const T& S<T>::get() const
+{
+	return val;
+}
+
+template<typename T>
+void read_val(T& v)
+{
+	cin>>v;
+}
+
+template<typename T>
+ostream& operator<<(ostream& os, vector<T>& v)
 {
     os<<"{";
-
-    for(auto lm : v)
-        os<<lm<<(lm==v[v.size()-1] ? "" : ", ");
-    os<<"}";
+    for(int i=0; i<v.size(); ++i)
+    {
+        os<<v[i]<<(i<v.size()-1?", ");
+    }
+    os<<"}\n";
 
     return os;
 }
 
-template <typename T>
-istream& operator>> (istream& is, vector<T>& v)
+template<typename T>
+istream& operator>>(istream& is, vector<T>& v)
 {
-    char braces;
-    is>>braces;
-    if(braces!='{')
-        is.clear();
-    int val;
-    while(is>>val)
-    {
-        v.push_back(val);
-        is>>braces;
-        if(braces!=',')
-            break;
+    char c=0;
+    is>>c;
+    if(c!='{'){
+        is.unget();
+        return is;
     }
-
+    for(T val; is>>val;){
+        v.push_back(val);
+        is>>c;
+        if (c!=',') break;
+    }
     return is;
 }
 
-
-
 int main()
 {
-    S<int> sint (13);
+	S<int> S_int {9};
+        cout<<S_int.get()<<endl;
+
+	S<char> S_char {'r'};
+        cout<<S_char.get()<<endl;
+
+	S<double> S_double {22.5};
+        cout<<S_double.get()<<endl;
+
+	S<string> S_string {"Valami"};
+        cout<<S_string.get()<<endl;
+
+	S<vector<int>> S_vector {vector<int>{12, 34, 56, 78}};
+        cout<<S_vector.get()<<endl;
+
     int i;
-    cout<<"Add an integer: "<<endl;
+    cout<<"Int: ";
     read_val(i);
-    sint=i;
+    S<int> S_int2 {i};
+    cout<<S_int2.get()<<endl;
 
-    S<char> schar ('Y');
     char c;
-    cout<<"Add a char: "<<endl;
+    cout<<"Char: ";
     read_val(c);
-    schar=c;
-//    schar.set('W');
+    S<char> S_char2 {c};
+    cout<<S_char2.get()<<endl;
 
-    S<double> sdouble (3.141592);
     double d;
-    cout<<"Add a double: "<<endl;
+    cout<<"Double: ";
     read_val(d);
-    sdouble=d;
+    S<double> S_double2 {d};
+    cout<<S_double2.get()<<endl;
 
-    S<string> sstring ("Yare Yare Daze");
-//    sstring="Kono Dio Da!";
     string s;
-    cout<<"Add string: "<<endl;
+    cout<<"String: ";
     read_val(s);
-    sstring=s;
+    S<string> S_string2 {s};
+    cout<<S_string2.get()<<endl;
 
-    S<vector<int>> svector (vector<int> {0, 1, 2, 3, 4});
-
-    cout<<"int: "<<sint.get()<<"\n"
-        <<"char: "<<schar.get()<<"\n"
-        <<"double: "<<sdouble.get()<<"\n"
-        <<"string: "<<sstring.get()<<endl;
-
-    cout<<"Vector<int> {val, val, val}"<<endl;
-    vector<int> test;
-    read_val(test);
-    cout<<test;
-
+    vector<int> v2;
+    cout<<"Vector<int> { val1, val2, val3 }: ";
+    read_val(v2);
+    S<vector<int>> S_vector2 {v2};
+    cout<<S_vector2.get();
+    
     return 0;
 }
